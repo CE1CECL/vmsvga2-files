@@ -1,0 +1,53 @@
+December 1st 2010
+
+ChangeLog for EnsoniqAudioPCI 1.0.3
+===================================
+-- Speeded-up erase head now implemented using workloop instead of a thread_call.
+-- Kernel flag summary
+   es_oso=X sets output sample offset
+   es_iso=X sets input sample offset
+   es_osl=X sets output sample latency
+   es_isl=X sets input sample latency
+   es_mco=X sets mix-clip-overhead (range 2-98, resulting overhead is 100/x, default is 10)
+   es_stable=1/0 (boolean value) sets whether the clock is stable on output IOAudioEngine
+   -es_debug enables debug mode for IOAudioEngine
+   es_bm=X sets size of DMA buffers in 4K-page units (1 to 64, default is 32)
+
+ChangeLog for AppleAC97Audio 1.1.0
+==================================
+-- Boosted PCM Out volume by 12db.
+-- Vectorized floating point loops in AppleAC97AudioEngine.cpp to use MMX/SSE/SSE2.
+-- Improved cache coherency on the DMA buffers.
+-- Limited buffers in Apple's chip drivers to 32-bit physical addresses for compatibility.
+
+Audio glitch/stuttering problem
+===============================
+Some systems experience stuttering audio when using the driver under VMware.  The glitches
+are due to an unsolvable race condition between producer and consumer on the output DMA
+buffer.
+-- The producer is a CoreAudio thread in the guest charged with generating audio output
+   samples for the buffer.  The guest thread uses a self-timing scheme to try and generate
+   samples in time.
+-- The consumer is a VMware backend thread on the host that emulates the ES1371 chipset.
+   This thread partitions the DMA buffer into chunks, copying and feeding the chunks to
+   the host sound system.  The host thread uses a different self-timing scheme to insert
+   delays between chunks.  The host timing scheme is affected by a VMX parameter called
+   "pciSound.playBuffer".  This parameter is an integer measured in milliseconds (default
+   value is 200), and the host thread attempts to simulate a virtual buffer whose size
+   (measured in milliseconds) is the given value.
+-- The only flow-control between producer and consumer is a weak flow-control where the
+   producer takes timestamps of DMA buffer wrap-arounds, and calculates a long-term
+   average of the consumer's drain rate.  Note that due to the self-timing scheme in
+   the host thread, the timing of the buffer chunks in the consumer are somewhat erratic,
+   and occasionally deviate sharply from the average rate.
+
+This race condition can't be solved at the driver level.  In order to correct, it's
+necessary to either
+-- rewrite the consumer (host) code to be event-driven based on feedback from the host
+   sound system instead of using a self-timing scheme.  This way the emulation would
+   more closely resemble the buffer drain of a hardware ES1371 chipset.
+-- reengineer the CoreAudio architecture to be interrupt-driven instead of using a
+   self-timing scheme so that the producer generates audio samples on-demand as
+   the consumer reports its buffer progress using guest interrupts.
+
+-- zenith432

@@ -1,0 +1,22 @@
+ChangeLog
+from AppleAC97Audio v1.0.0 (on http://opensource.apple.com/release/mac-os-x-10411ppc)
+to   AppleAC97Audio v1.1.0
+===========================
+- Added XCode Project File.
+- Updated Info.plist files and InfoPlist.strings.
+- Ported to 64-bit.
+- Changed sprintf to snprintf.
+- Limited buffers in Apple's chip drivers to 32-bit physical addresses for compatibility.
+- Disabled test if master volume is non-zero.
+- Disabled setting the sample rate via AC97 registers (it's already set via the chip driver.)
+- Boosted PCM Out volume by 12db.
+- Vectorized floating point loops in AppleAC97AudioEngine.cpp to use MMX/SSE/SSE2.
+- Added support for setting description in AppleAC97AudioEnginePCMIn.cpp and AppleAC97AudioEngineSPDIF.cpp.
+- Added support for setting the following properties in AppleAC97AudioEnginePCMOut.cpp.
+  description
+  CoreAudio plugin
+  output sample offset
+  output sample latency
+  mix clip overhead
+  clock-is-stable property
+  CoreAudio buffer frame size (via plugin)

@@ -1,0 +1,99 @@
+Changelog from 1.2.4 to 1.2.5
+=============================
+1) Added Support for ScreenObject2 (available Workstation 8/Fusion 4 and beyond).
+2) Fixed bug with use of ScreenObject/ScreenObject2 under Workstation 9/Fusion 5.
+3) Memory Allocation has been overhauled to support unrestricted allocation
+   of guest RAM for CGS surfaces.  Previously VMsvga2 was limited to use
+   of guest VRAM for this purpose.
+   This implies guest VRAM can be reduced to its minimum value of
+   16000 KiB - and VMsvga2 will still provide full functionality.
+   guest VRAM size may be set in the VMX file as follows
+     svga.autodetect = "FALSE"
+     svga.vramSize = "16384000"
+4) Window grab in Grab application has worked since OS 10.7 due to fixes
+   made in OS X.
+
+Changelog from 1.2.3 to 1.2.4
+=============================
+
+1) Added display modes 1152x720, 2560x1440.
+2) Smoother mode changes when using fit-guest/autofit-guest.
+3) Alpha Cursor conversion optimized with MMX.
+4) Log levels for vmw_log_fb are 1 - 3.
+5) Supports 256-byte EDID.
+6) Checks admin privilege for vmware-tools-daemon when doing [auto]fit-guest.
+7) Limits [auto]fit-guest resolution to maximum supported by host.
+8) Supports Surface-to-Surface copy-blit in Accelerator.
+9) Improved screen grab function to eliminate an intermediate copy.
+10) Restrict creation of surfaces to WindowServer.
+11) Discontinued support for OS X Leopard.
+
+Changelog from 1.2.2 to 1.2.3
+=============================
+
+1) Added three more display modes
+   - 2048x1152, 1600x900, 1366x768
+
+Changelog from 1.2.1 to 1.2.2
+=============================
+
+This is a bugfix release related to several apps from OS 10.6.
+
+1) Fixed crash in "DVD Player".  It still doesn't work, but exits gracefully
+   with an error message.
+
+2) Fixed invisible selection frame in the Grab application.
+
+3) Grabbing a window in Grab freezes the system (same result for a hotkey-based window screenshot).
+   - This looks like a problem in the WindowServer.  It takes a sequence of steps
+     that lead it into a deadlock.
+   - I've added ad-hoc code in the driver to prevent the deadlock, but the window-grab feature
+     still doesn't work.  I suggest using selection-grabs instead which work both in the
+     Grab application and with hotkeys.
+
+4) Optimized some unnecessary memory allocations in the main code sequence followed by the WindowServer.
+
+Changelog from 1.2.0 to 1.2.1
+=============================
+
+1) Fixed the guest VRAM size bug
+   - This bug happens if the guest vram size is less than 128MB and Screen Object is active.
+   - vram size was being reported incorrectly.
+   - As a result the vram allocator was failing.
+
+Changelog from 1.1.1 to 1.2.0
+=============================
+
+1) Added four more display modes
+   - 1920x1080, 1280x960, 1280x768, 1280x720
+
+2) VMsvga2 now supports the Screen Capture (snapshot) feature on OS 10.6.
+
+3) Added support for the new Screen Objects feature of Workstation 7/Fusion 3.
+   - The presence of Screen Objects obsoletes the "-svga3d" option.  With Screen Objects, the driver
+     will automagically select the best rendering sequence for each function.
+   - For a VMX file with guestOS = "darwin..." Screen Objects are on by default.
+   - For a VMX file with guestOS = "freebsd...", Screen Objects need to be enabled.  Add
+     the following lines to your VMX file
+       svga.enableScreenObject = "TRUE"
+       svga.enableTracesReg = "TRUE"
+
+4) Enhanced the support of CGSSurfaces for Apple applications that use them
+   outside of the OpenGL framework.
+
+
+Changelog from 1.1.0 to 1.1.1
+=============================
+
+1) Added three more display modes - 1920x1440, 2048x1536 and 2560x1600.
+   - The mode list is trimmed to resolutions supported by the host, so not all modes may appear.
+
+2) Fixed blit bugs affecting window motion in "-svga3d" mode on VMware Workstation 7.
+
+3) The Leopard version of VMsvga2 impersonates VMwareIOFramebuffer, so it's no longer necessary
+   to patch VMware darwin Tools from Fusion 2.x to get fit-guest support.
+   - This feature is not available in the SnowLeopard version of VMsvga2.  Apple made a
+     change to IOKit in OS 10.6, so the impersonation option doesn't work.
+
+4) Fixed the shutdown procedure so it's possible to see changes in the display made
+   after the WindowServer shuts down.

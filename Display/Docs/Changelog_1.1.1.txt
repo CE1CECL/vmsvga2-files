@@ -1,0 +1,15 @@
+Changelog from 1.1.0 to 1.1.1
+=============================
+
+1) Added three more display modes - 1920x1440, 2048x1536 and 2560x1600.
+   - The mode list is trimmed to resolutions supported by the host, so not all modes may appear.
+
+2) Fixed blit bugs affecting window motion in "-svga3d" mode on VMware Workstation 7.
+
+3) The Leopard version of VMsvga2 impersonates VMwareIOFramebuffer, so it's no longer necessary
+   to patch VMware darwin Tools from Fusion 2.x to get fit-guest support.
+   - This feature is not available in the SnowLeopard version of VMsvga2.  Apple made a
+     change to IOKit in OS 10.6, so the impersonation option doesn't work.
+
+4) Fixed the shutdown procedure so it's possible to see changes in the display made
+   after the WindowServer shuts down.

@@ -1,0 +1,14 @@
+Changelog from 1.2.3 to 1.2.4
+=============================
+
+1) Added display modes 1152x720, 2560x1440.
+2) Smoother mode changes when using fit-guest/autofit-guest.
+3) Alpha Cursor conversion optimized with MMX.
+4) Log levels for vmw_log_fb are 1 - 3.
+5) Supports 256-byte EDID.
+6) Checks admin privilege for vmware-tools-daemon when doing [auto]fit-guest.
+7) Limits [auto]fit-guest resolution to maximum supported by host.
+8) Supports Surface-to-Surface copy-blit in Accelerator.
+9) Improved screen grab function to eliminate an intermediate copy.
+10) Restrict creation of surfaces to WindowServer.
+11) Discontinued support for OS X Leopard.

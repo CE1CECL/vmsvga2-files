@@ -1,0 +1,63 @@
+Changelog from 1.2.1 to 1.2.2
+=============================
+
+This is a bugfix release related to several apps from OS 10.6.
+
+1) Fixed crash in "DVD Player".  It still doesn't work, but exits gracefully
+   with an error message.
+
+2) Fixed invisible selection frame in the Grab application.
+
+3) Grabbing a window in Grab freezes the system (same result for a hotkey-based window screenshot).
+   - This looks like a problem in the WindowServer.  It takes a sequence of steps
+     that lead it into a deadlock.
+   - I've added ad-hoc code in the driver to prevent the deadlock, but the window-grab feature
+     still doesn't work.  I suggest using selection-grabs instead which work both in the
+     Grab application and with hotkeys.
+
+4) Optimized some unnecessary memory allocations in the main code sequence followed by the WindowServer.
+
+Changelog from 1.2.0 to 1.2.1
+=============================
+
+1) Fixed the guest VRAM size bug
+   - This bug happens if the guest vram size is less than 128MB and Screen Object is active.
+   - vram size was being reported incorrectly.
+   - As a result the vram allocator was failing.
+
+Changelog from 1.1.1 to 1.2.0
+=============================
+
+1) Added four more display modes
+   - 1920x1080, 1280x960, 1280x768, 1280x720
+
+2) VMsvga2 now supports the Screen Capture (snapshot) feature on OS 10.6.
+
+3) Added support for the new Screen Objects feature of Workstation 7/Fusion 3.
+   - The presence of Screen Objects obsoletes the "-svga3d" option.  With Screen Objects, the driver
+     will automagically select the best rendering sequence for each function.
+   - For a VMX file with guestOS = "darwin..." Screen Objects are on by default.
+   - For a VMX file with guestOS = "freebsd...", Screen Objects need to be enabled.  Add
+     the following lines to your VMX file
+       svga.enableScreenObject = "TRUE"
+       svga.enableTracesReg = "TRUE"
+
+4) Enhanced the support of CGSSurfaces for Apple applications that use them
+   outside of the OpenGL framework.
+
+
+Changelog from 1.1.0 to 1.1.1
+=============================
+
+1) Added three more display modes - 1920x1440, 2048x1536 and 2560x1600.
+   - The mode list is trimmed to resolutions supported by the host, so not all modes may appear.
+
+2) Fixed blit bugs affecting window motion in "-svga3d" mode on VMware Workstation 7.
+
+3) The Leopard version of VMsvga2 impersonates VMwareIOFramebuffer, so it's no longer necessary
+   to patch VMware darwin Tools from Fusion 2.x to get fit-guest support.
+   - This feature is not available in the SnowLeopard version of VMsvga2.  Apple made a
+     change to IOKit in OS 10.6, so the impersonation option doesn't work.
+
+4) Fixed the shutdown procedure so it's possible to see changes in the display made
+   after the WindowServer shuts down.
